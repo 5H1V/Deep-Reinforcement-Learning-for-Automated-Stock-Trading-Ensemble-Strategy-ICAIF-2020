@@ -16,7 +16,7 @@ from stable_baselines.ddpg.policies import DDPGPolicy
 from stable_baselines.common.policies import MlpPolicy, MlpLstmPolicy, MlpLnLstmPolicy
 from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
 from stable_baselines.common.vec_env import DummyVecEnv
-from preprocessing.preprocessors import *
+from preprocessing.preprocessors import data_split
 from config import config
 
 # customized env
@@ -81,14 +81,14 @@ def train_PPO(env_train, model_name, timesteps=50000):
 
 def train_GAIL(env_train, model_name, timesteps=1000):
     """GAIL Model"""
-    #from stable_baselines.gail import ExportDataset, generate_expert_traj
+    from stable_baselines.gail import ExportDataset, generate_expert_traj
     start = time.time()
     # generate expert trajectories
     model = SAC('MLpPolicy', env_train, verbose=1)
     generate_expert_traj(model, 'expert_model_gail', n_timesteps=100, n_episodes=10)
 
     # Load dataset
-    dataset = ExpertDataset(expert_path='expert_model_gail.npz', traj_limitation=10, verbose=1)
+    dataset = ExportDataset(expert_path='expert_model_gail.npz', traj_limitation=10, verbose=1)
     model = GAIL('MLpPolicy', env_train, dataset, verbose=1)
 
     model.learn(total_timesteps=1000)

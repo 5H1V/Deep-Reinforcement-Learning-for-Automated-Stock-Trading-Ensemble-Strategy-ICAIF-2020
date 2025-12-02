@@ -18,6 +18,7 @@ def data_split(df,start,end):
     :param data: (df) pandas dataframe, start, end
     :return: (df) pandas dataframe
     """
+    df['datadate'] = pd.to_datetime(df['datadate'], format='%Y%m%d')
     data = df[(df.datadate >= start) & (df.datadate < end)]
     data=data.sort_values(['datadate','tic'],ignore_index=True)
     #data  = data[final_columns]
@@ -95,6 +96,7 @@ def preprocess_data():
 
     df = load_dataset(file_name=config.TRAINING_DATA_FILE)
     # get data after 2009
+    df['datadate'] = pd.to_datetime(df['datadate'], format='%Y%m%d')
     df = df[df.datadate>=pd.to_datetime('2019-01-01').strftime('%Y%m%d')]
     # calcualte adjusted price
     df_preprocess = calcualte_price(df)

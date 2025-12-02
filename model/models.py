@@ -164,6 +164,7 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
 
     # based on the analysis of the in-sample data
     #turbulence_threshold = 140
+    df['datadate'] = pd.to_datetime(df['datadate'], format='%Y%m%d')
     insample_turbulence = df[(df.datadate<pd.to_datetime('2019-02-07').strftime('%Y%m%d')) & (df.datadate>=pd.to_datetime('2009-01-01').strftime('%Y%m%d'))]
     insample_turbulence = insample_turbulence.drop_duplicates(subset=['datadate'])
     insample_turbulence_threshold = np.quantile(insample_turbulence.turbulence.values, .90)
@@ -181,7 +182,8 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
 
         # Tuning trubulence index based on historical data
         # Turbulence lookback window is one quarter
-        end_date_index = df.index[df["datadate"] == unique_trade_date[i - rebalance_window - validation_window]].to_list()[-1]
+        df['datadate'] = pd.to_datetime(df['datadate'], format='%Y%m%d')
+        end_date_index = df.index[df['datadate'] == unique_trade_date[i - rebalance_window - validation_window]].to_list()[-1]
         start_date_index = end_date_index - validation_window*30 + 1
 
         historical_turbulence = df.iloc[start_date_index:(end_date_index + 1), :]
@@ -206,7 +208,7 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
 
         ############## Environment Setup starts ##############
         ## training env
-        train = data_split(df, start=20090000, end=unique_trade_date[i - rebalance_window - validation_window])
+        train = data_split(df, start=pd.to_datetime("2009-01-01").strftime('%Y%m%d'), end=unique_trade_date[i - rebalance_window - validation_window])
         env_train = DummyVecEnv([lambda: StockEnvTrain(train)])
 
         ## validation env

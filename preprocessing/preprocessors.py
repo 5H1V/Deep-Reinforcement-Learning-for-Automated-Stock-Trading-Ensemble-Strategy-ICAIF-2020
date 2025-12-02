@@ -125,13 +125,14 @@ def calcualte_turbulence(df):
     start = 252
     turbulence_index = [0]*start
     count=0
+    turbulence_temp=0
     for i in range(start,len(unique_date)):
         current_price = df_price_pivot[df_price_pivot.index == unique_date[i]]
         hist_price = df_price_pivot[[n in unique_date[0:i] for n in df_price_pivot.index ]]
         cov_temp = hist_price.cov()
         current_temp=(current_price - np.mean(hist_price,axis=0))
         temp = current_temp.values.dot(np.linalg.inv(cov_temp)).dot(current_temp.values.T)
-        if temp>0:
+        if temp[0][0]>0:
             count+=1
             if count>2:
                 turbulence_temp = temp[0][0]
@@ -141,8 +142,6 @@ def calcualte_turbulence(df):
         else:
             turbulence_temp=0
         turbulence_index.append(turbulence_temp)
-    
-    
     turbulence_index = pd.DataFrame({'datadate':df_price_pivot.index,
                                      'turbulence':turbulence_index})
     return turbulence_index

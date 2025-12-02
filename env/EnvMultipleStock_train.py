@@ -93,24 +93,25 @@ class StockEnvTrain(gym.Env):
         # print(actions)
 
         if self.terminal:
+            # EDIT THIS TO FIX GRAPHS
             plt.plot(self.asset_memory,'r')
             plt.savefig('results/account_value_train.png')
             plt.close()
             end_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
             
-            #print("end_total_asset:{}".format(end_total_asset))
+            print("end_total_asset:{}".format(end_total_asset))
             df_total_value = pd.DataFrame(self.asset_memory)
             df_total_value.to_csv('results/account_value_train.csv')
-            #print("total_reward:{}".format(self.state[0]+sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):61]))- INITIAL_ACCOUNT_BALANCE ))
-            #print("total_cost: ", self.cost)
-            #print("total_trades: ", self.trades)
+            print("total_reward:{}".format(self.state[0]+sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):61]))- INITIAL_ACCOUNT_BALANCE ))
+            print("total_cost: ", self.cost)
+            print("total_trades: ", self.trades)
             df_total_value.columns = ['account_value']
             df_total_value['daily_return']=df_total_value.pct_change(1)
             sharpe = (252**0.5)*df_total_value['daily_return'].mean()/ \
                   df_total_value['daily_return'].std()
-            #print("Sharpe: ",sharpe)
-            #print("=================================")
+            print("Sharpe: ",sharpe)
+            print("=================================")
             df_rewards = pd.DataFrame(self.rewards_memory)
             #df_rewards.to_csv('results/account_rewards_train.csv')
             
@@ -128,7 +129,7 @@ class StockEnvTrain(gym.Env):
             
             begin_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
-            #print("begin_total_asset:{}".format(begin_total_asset))
+            print("begin_total_asset:{}".format(begin_total_asset))
             
             argsort_actions = np.argsort(actions)
             
@@ -136,17 +137,17 @@ class StockEnvTrain(gym.Env):
             buy_index = argsort_actions[::-1][:np.where(actions > 0)[0].shape[0]]
 
             for index in sell_index:
-                # print('take sell action'.format(actions[index]))
+                print('take sell action'.format(actions[index]))
                 self._sell_stock(index, actions[index])
 
             for index in buy_index:
-                # print('take buy action: {}'.format(actions[index]))
+                print('take buy action: {}'.format(actions[index]))
                 self._buy_stock(index, actions[index])
 
             self.day += 1
             self.data = self.df.loc[self.day,:]         
             #load next state
-            # print("stock_shares:{}".format(self.state[29:]))
+            print("stock_shares:{}".format(self.state[29:]))
             self.state =  [self.state[0]] + \
                     self.data.adjcp.values.tolist() + \
                     list(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]) + \
@@ -158,7 +159,7 @@ class StockEnvTrain(gym.Env):
             end_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
             self.asset_memory.append(end_total_asset)
-            #print("end_total_asset:{}".format(end_total_asset))
+            print("end_total_asset:{}".format(end_total_asset))
             
             self.reward = end_total_asset - begin_total_asset            
             # print("step_reward:{}".format(self.reward))

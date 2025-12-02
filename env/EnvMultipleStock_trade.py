@@ -118,6 +118,7 @@ class StockEnvTrade(gym.Env):
         # print(actions)
 
         if self.terminal:
+            # EDIT THIS TO FIX GRAPHS
             plt.plot(self.asset_memory,'r')
             plt.savefig('results/account_value_trade_{}_{}.png'.format(self.model_name, self.iteration))
             plt.close()
@@ -175,9 +176,9 @@ class StockEnvTrade(gym.Env):
             self.day += 1
             self.data = self.df.loc[self.day,:]         
             self.turbulence = self.data['turbulence'].values[0]
-            #print(self.turbulence)
+            print("Turbulence: {}".format(self.turbulence))
             #load next state
-            # print("stock_shares:{}".format(self.state[29:]))
+            print("stock_shares:{}".format(self.state[29:]))
             self.state =  [self.state[0]] + \
                     self.data.adjcp.values.tolist() + \
                     list(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]) + \
@@ -189,7 +190,7 @@ class StockEnvTrade(gym.Env):
             end_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
             self.asset_memory.append(end_total_asset)
-            #print("end_total_asset:{}".format(end_total_asset))
+            print("end_total_asset:{}".format(end_total_asset))
             
             self.reward = end_total_asset - begin_total_asset            
             # print("step_reward:{}".format(self.reward))

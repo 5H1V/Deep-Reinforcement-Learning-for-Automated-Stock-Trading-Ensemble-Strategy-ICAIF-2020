@@ -94,7 +94,7 @@ class StockEnvValidation(gym.Env):
         # perform buy action based on the sign of the action
         if self.turbulence< self.turbulence_threshold:
             available_amount = self.state[0] // self.state[index+1]
-            # print('available_amount:{}'.format(available_amount))
+            print('available_amount:{}'.format(available_amount))
             
             #update balance
             self.state[0] -= self.state[index+1]*min(available_amount, action)* \
@@ -122,18 +122,18 @@ class StockEnvValidation(gym.Env):
             df_total_value.to_csv('results/account_value_validation_{}.csv'.format(self.iteration))
             end_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
-            #print("previous_total_asset:{}".format(self.asset_memory[0]))           
+            print("previous_total_asset:{}".format(self.asset_memory[0]))           
 
             #print("end_total_asset:{}".format(end_total_asset))
-            #print("total_reward:{}".format(self.state[0]+sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):61]))- self.asset_memory[0] ))
-            #print("total_cost: ", self.cost)
-            #print("total trades: ", self.trades)
+            print("total_reward:{}".format(self.state[0]+sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):61]))- self.asset_memory[0] ))
+            print("total_cost: ", self.cost)
+            print("total trades: ", self.trades)
 
             df_total_value.columns = ['account_value']
             df_total_value['daily_return']=df_total_value.pct_change(1)
             sharpe = (4**0.5)*df_total_value['daily_return'].mean()/ \
                   df_total_value['daily_return'].std()
-            #print("Sharpe: ",sharpe)
+            print("Sharpe: ",sharpe)
             
             #df_rewards = pd.DataFrame(self.rewards_memory)
             #df_rewards.to_csv('results/account_rewards_trade_{}.csv'.format(self.iteration))
@@ -153,7 +153,7 @@ class StockEnvValidation(gym.Env):
                 actions=np.array([-HMAX_NORMALIZE]*STOCK_DIM)
             begin_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
-            #print("begin_total_asset:{}".format(begin_total_asset))
+            print("begin_total_asset:{}".format(begin_total_asset))
             
             argsort_actions = np.argsort(actions)
             
@@ -161,11 +161,11 @@ class StockEnvValidation(gym.Env):
             buy_index = argsort_actions[::-1][:np.where(actions > 0)[0].shape[0]]
 
             for index in sell_index:
-                # print('take sell action'.format(actions[index]))
+                print('take sell action'.format(actions[index]))
                 self._sell_stock(index, actions[index])
 
             for index in buy_index:
-                # print('take buy action: {}'.format(actions[index]))
+                print('take buy action: {}'.format(actions[index]))
                 self._buy_stock(index, actions[index])
 
             self.day += 1
@@ -173,7 +173,7 @@ class StockEnvValidation(gym.Env):
             self.turbulence = self.data['turbulence'].values[0]
             #print(self.turbulence)
             #load next state
-            # print("stock_shares:{}".format(self.state[29:]))
+            print("stock_shares:{}".format(self.state[29:]))
             self.state =  [self.state[0]] + \
                     self.data.adjcp.values.tolist() + \
                     list(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]) + \
@@ -185,7 +185,7 @@ class StockEnvValidation(gym.Env):
             end_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
             self.asset_memory.append(end_total_asset)
-            #print("end_total_asset:{}".format(end_total_asset))
+            print("end_total_asset:{}".format(end_total_asset))
             
             self.reward = end_total_asset - begin_total_asset            
             # print("step_reward:{}".format(self.reward))

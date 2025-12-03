@@ -94,7 +94,7 @@ class StockEnvValidation(gym.Env):
         # perform buy action based on the sign of the action
         if self.turbulence< self.turbulence_threshold:
             available_amount = self.state[0] // self.state[index+1]
-            print('available_amount:{}'.format(available_amount))
+            # print('available_amount:{}'.format(available_amount))
             
             #update balance
             self.state[0] -= self.state[index+1]*min(available_amount, action)* \
@@ -161,11 +161,11 @@ class StockEnvValidation(gym.Env):
             buy_index = argsort_actions[::-1][:np.where(actions > 0)[0].shape[0]]
 
             for index in sell_index:
-                #print('take sell action'.format(actions[index]))
+                # print('take sell action'.format(actions[index]))
                 self._sell_stock(index, actions[index])
 
             for index in buy_index:
-                #print('take buy action: {}'.format(actions[index]))
+                # print('take buy action: {}'.format(actions[index]))
                 self._buy_stock(index, actions[index])
 
             self.day += 1
@@ -173,7 +173,7 @@ class StockEnvValidation(gym.Env):
             self.turbulence = self.data['turbulence'].values[0]
             #print(self.turbulence)
             #load next state
-            #print("stock_shares:{}".format(self.state[29:]))
+            # print("stock_shares:{}".format(self.state[29:]))
             self.state =  [self.state[0]] + \
                     self.data.adjcp.values.tolist() + \
                     list(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]) + \

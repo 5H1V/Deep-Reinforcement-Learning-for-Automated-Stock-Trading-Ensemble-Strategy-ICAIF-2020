@@ -30,8 +30,7 @@ def run_model() -> None:
     # 2019/02/07 is the date that validation starts
     # 2022/06/17 is the date that real trading starts
     # unique_trade_date needs to start from 2019/02/07 for validation purpose
-    data['datadate'] = pd.to_datetime(data['datadate'], format='%Y%m%d')
-    unique_trade_date = data[(data.datadate > pd.to_datetime('2019-02-06').strftime('%Y%m%d'))&(data.datadate < pd.to_datetime('2025-10-01').strftime('%Y%m%d'))].datadate.unique()
+    unique_trade_date = data[(data.datadate > 20190206)&(data.datadate < 20251001)].datadate.unique()
     print(unique_trade_date)
 
     # rebalance_window is the number of months to retrain the model

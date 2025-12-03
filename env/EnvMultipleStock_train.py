@@ -111,7 +111,7 @@ class StockEnvTrain(gym.Env):
             sharpe = (252**0.5)*df_total_value['daily_return'].mean()/ \
                   df_total_value['daily_return'].std()
             #print("Sharpe: ",sharpe)
-            print("=================================")
+            #print("=================================")
             df_rewards = pd.DataFrame(self.rewards_memory)
             #df_rewards.to_csv('results/account_rewards_train.csv')
             
@@ -137,17 +137,17 @@ class StockEnvTrain(gym.Env):
             buy_index = argsort_actions[::-1][:np.where(actions > 0)[0].shape[0]]
 
             for index in sell_index:
-                #print('take sell action'.format(actions[index]))
+                # print('take sell action'.format(actions[index]))
                 self._sell_stock(index, actions[index])
 
             for index in buy_index:
-                #print('take buy action: {}'.format(actions[index]))
+                # print('take buy action: {}'.format(actions[index]))
                 self._buy_stock(index, actions[index])
 
             self.day += 1
             self.data = self.df.loc[self.day,:]         
             #load next state
-            #print("stock_shares:{}".format(self.state[29:]))
+            # print("stock_shares:{}".format(self.state[29:]))
             self.state =  [self.state[0]] + \
                     self.data.adjcp.values.tolist() + \
                     list(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]) + \

@@ -18,7 +18,6 @@ def data_split(df,start,end):
     :param data: (df) pandas dataframe, start, end
     :return: (df) pandas dataframe
     """
-    df['datadate'] = pd.to_datetime(df['datadate'], format='%Y%m%d')
     data = df[(df.datadate >= start) & (df.datadate < end)]
     data=data.sort_values(['datadate','tic'],ignore_index=True)
     #data  = data[final_columns]
@@ -96,8 +95,7 @@ def preprocess_data():
 
     df = load_dataset(file_name=config.TRAINING_DATA_FILE)
     # get data after 2009
-    df['datadate'] = pd.to_datetime(df['datadate'], format='%Y%m%d')
-    df = df[df.datadate>=pd.to_datetime('2009-01-01').strftime('%Y%m%d')]
+    df = df[df.datadate>=20090000]
     # calcualte adjusted price
     df_preprocess = calcualte_price(df)
     # add technical indicators using stockstats
@@ -120,10 +118,15 @@ def add_turbulence(df):
 
 
 def calcualte_turbulence(df):
+    """calculate turbulence index based on dow 30"""
+    # can add other market assets
+    
     df_price_pivot=df.pivot(index='datadate', columns='tic', values='adjcp')
     unique_date = df.datadate.unique()
+    # start after a year
     start = 252
     turbulence_index = [0]*start
+    #turbulence_index = [0]
     count=0
     turbulence_temp=0
     for i in range(start,len(unique_date)):
@@ -142,6 +145,8 @@ def calcualte_turbulence(df):
         else:
             turbulence_temp=0
         turbulence_index.append(turbulence_temp)
+        
+        
     turbulence_index = pd.DataFrame({'datadate':df_price_pivot.index,
                                      'turbulence':turbulence_index})
     return turbulence_index
